@@ -418,6 +418,19 @@ FodyWeavers.xsd
 # Local History for Visual Studio Code
 .history/
 
+# ABP Studio and ABP-generated client libraries
+**/.abpstudio/
+**/*.abppkg.analyze.json
+**/wwwroot/libs/*
+appsettings.secrets.json
+tempkey.rsa
+tempkey.jwk
+
+# IDE workspaces not shared by the team
+**/.idea/
+*.sln.iml
+*.code-workspace
+
 # Built Visual Studio Code Extensions
 *.vsix
 

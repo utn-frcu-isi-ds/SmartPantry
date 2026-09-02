@@ -1,6 +1,6 @@
-## Issue asociado
+## Issue asociado (si corresponde)
 
-Closes #
+<!-- En TP02 no es obligatorio. Para otros prácticos, completar por ejemplo: Closes #12. -->
 
 ## Qué se implementó
 
@@ -9,8 +9,8 @@ Closes #
 ## Cómo se probó
 
 - [ ] Verificación manual o documental
-- [ ] Job `verify` de GitHub Actions en verde
-- [ ] Pruebas automatizadas (desde TP03; indicar "No aplica" en TP02)
+- [ ] Job de GitHub Actions, si la consigna lo requiere
+- [ ] Pruebas automatizadas, si corresponden
 
 ## Evidencia
 

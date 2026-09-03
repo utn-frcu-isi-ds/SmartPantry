@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { AppComponent } from './app.component';
+import { environment } from '../environments/environment';
 
-describe('AppComponent', () => {
-  it('can be instantiated', () => {
-    expect(new AppComponent()).toBeInstanceOf(AppComponent);
+describe('SmartPantry frontend configuration', () => {
+  it('identifies the application', () => {
+    expect(environment.application.name).toBe('SmartPantry');
   });
 });

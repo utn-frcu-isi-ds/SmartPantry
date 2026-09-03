@@ -192,7 +192,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "buildTarget": "SmartPantry:build",
+            "buildTarget": "SmartPantry:build:development",
             "runner": "vitest"
           }
         },

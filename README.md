@@ -26,14 +26,6 @@ Requisitos: Visual Studio 2022 o 2026 con el componente Desarrollo de ASP.NET y 
 
 Sin Visual Studio, desde la raíz se puede utilizar `abp install-libs`, `dotnet restore .\SmartPantry.slnx` y `dotnet build .\SmartPantry.slnx --configuration Debug --no-restore`.
 
-## Producto interno
-
-La primera operación vertical permite registrar un producto interno con nombre obligatorio y marca opcional, y recuperarlo por su identificador. La migración `AddProducts` crea la tabla `AppProducts` al ejecutar `SmartPantry.DbMigrator`.
-
-Mientras no se implemente autenticación, los endpoints de `ProductAppService` permiten acceso anónimo sólo para la comprobación académica en Swagger. Esta decisión es temporal y debe revisarse al incorporar seguridad.
-
-Con `SmartPantry.HttpApi.Host` en ejecución, Swagger permite probar la creación mediante `POST /api/app/product` y consultar el resultado mediante `GET /api/app/product/{id}`. Las pruebas se ejecutan con `dotnet test .\SmartPantry.slnx --configuration Release`; las verificaciones de Angular continúan con `yarn build` y `yarn test --watch=false` desde `angular`.
-
 ## Estructura de la solución
 
 - `src`: capas Domain, Application, EntityFrameworkCore y HttpApi.Host de la aplicación ABP.

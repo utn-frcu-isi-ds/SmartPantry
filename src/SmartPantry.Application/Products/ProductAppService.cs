@@ -1,44 +1,34 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace SmartPantry.Products;
 
 [AllowAnonymous]
-public class ProductAppService : ApplicationService, IProductAppService
+public class ProductAppService : CrudAppService<
+    Product, ProductDto, Guid, PagedAndSortedResultRequestDto, CreateProductDto, UpdateProductDto>,
+    IProductAppService
 {
-    private readonly IRepository<Product, Guid> _productRepository;
-
-    public ProductAppService(IRepository<Product, Guid> productRepository)
+    public ProductAppService(IRepository<Product, Guid> repository)
+        : base(repository)
     {
-        _productRepository = productRepository;
     }
 
-    public async Task<ProductDto> CreateAsync(CreateProductDto input)
+    public override async Task<ProductDto> CreateAsync(CreateProductDto input)
     {
         var product = new Product(GuidGenerator.Create(), input.Name, input.Brand);
-
-        await _productRepository.InsertAsync(product, autoSave: true);
-
-        return ToDto(product);
+        await Repository.InsertAsync(product, autoSave: true);
+        return MapToGetOutputDto(product);
     }
 
-    public async Task<ProductDto> GetAsync(Guid id)
+    public override async Task<ProductDto> UpdateAsync(Guid id, UpdateProductDto input)
     {
-        var product = await _productRepository.GetAsync(id);
-
-        return ToDto(product);
-    }
-
-    private static ProductDto ToDto(Product product)
-    {
-        return new ProductDto
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Brand = product.Brand
-        };
+        var product = await Repository.GetAsync(id);
+        product.UpdateDetails(input.Name, input.Brand);
+        await Repository.UpdateAsync(product, autoSave: true);
+        return MapToGetOutputDto(product);
     }
 }

@@ -49,6 +49,7 @@ namespace SmartPantry;
 [DependsOn(
     typeof(SmartPantryHttpApiModule),
     typeof(AbpStudioClientAspNetCoreModule),
+    typeof(AbpBackgroundWorkersModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreMultiTenancyModule),

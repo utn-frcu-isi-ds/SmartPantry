@@ -54,20 +54,27 @@ public abstract class ProductAppService_Tests<TStartupModule> : SmartPantryAppli
     [Fact]
     public async Task Should_List_Update_And_Delete_A_Product()
     {
-        var created = await _productAppService.CreateAsync(new CreateProductDto
+        var firstProduct = await _productAppService.CreateAsync(new CreateProductDto
         {
-            Name = "Producto TP06",
+            Name = "000 Producto TP06",
             Brand = "Marca A"
+        });
+        var lastProduct = await _productAppService.CreateAsync(new CreateProductDto
+        {
+            Name = "ZZZ Producto TP06",
+            Brand = "Marca Z"
         });
 
         var list = await _productAppService.GetListAsync(new PagedAndSortedResultRequestDto
         {
-            MaxResultCount = 10,
-            Sorting = "Name"
+            MaxResultCount = 1,
+            Sorting = "Name ASC"
         });
-        list.Items.ShouldContain(item => item.Id == created.Id);
+        list.TotalCount.ShouldBeGreaterThanOrEqualTo(2);
+        list.Items.Count.ShouldBe(1);
+        list.Items.Single().Id.ShouldBe(firstProduct.Id);
 
-        var updated = await _productAppService.UpdateAsync(created.Id, new UpdateProductDto
+        var updated = await _productAppService.UpdateAsync(lastProduct.Id, new UpdateProductDto
         {
             Name = "  Producto actualizado  ",
             Brand = "  Marca B  "
@@ -75,10 +82,10 @@ public abstract class ProductAppService_Tests<TStartupModule> : SmartPantryAppli
         updated.Name.ShouldBe("Producto actualizado");
         updated.Brand.ShouldBe("Marca B");
 
-        var fetched = await _productAppService.GetAsync(created.Id);
+        var fetched = await _productAppService.GetAsync(lastProduct.Id);
         fetched.Name.ShouldBe("Producto actualizado");
 
-        await _productAppService.DeleteAsync(created.Id);
-        await Should.ThrowAsync<EntityNotFoundException>(() => _productAppService.GetAsync(created.Id));
+        await _productAppService.DeleteAsync(lastProduct.Id);
+        await Should.ThrowAsync<EntityNotFoundException>(() => _productAppService.GetAsync(lastProduct.Id));
     }
 }

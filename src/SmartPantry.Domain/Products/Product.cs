@@ -17,22 +17,19 @@ public class Product : AggregateRoot<Guid>
     public Product(Guid id, string name, string? brand)
         : base(id)
     {
-        SetName(name);
-        SetBrand(brand);
+        UpdateDetails(name, brand);
     }
 
-    private void SetName(string name)
+    public void UpdateDetails(string name, string? brand)
     {
-        Name = Check.NotNullOrWhiteSpace(name?.Trim(), nameof(name), ProductConsts.MaxNameLength);
-    }
-
-    private void SetBrand(string? brand)
-    {
-        Brand = brand?.Trim();
-
-        if (Brand?.Length > ProductConsts.MaxBrandLength)
+        var normalizedName = Check.NotNullOrWhiteSpace(name?.Trim(), nameof(name), ProductConsts.MaxNameLength);
+        var normalizedBrand = brand?.Trim();
+        if (normalizedBrand?.Length > ProductConsts.MaxBrandLength)
         {
             throw new ArgumentException($"Brand cannot be longer than {ProductConsts.MaxBrandLength} characters.", nameof(brand));
         }
+
+        Name = normalizedName;
+        Brand = normalizedBrand;
     }
 }

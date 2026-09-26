@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SmartPantry.ExternalProducts;
 
-public class OpenFoodFactsClient : IExternalProductCatalogClient
+public class OpenFoodFactsProductCatalogClient : IExternalProductCatalogClient
 {
     private readonly HttpClient _httpClient;
 
-    public OpenFoodFactsClient(HttpClient httpClient)
+    public OpenFoodFactsProductCatalogClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }

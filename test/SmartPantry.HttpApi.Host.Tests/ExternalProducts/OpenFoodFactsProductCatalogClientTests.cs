@@ -8,7 +8,7 @@ using Xunit;
 
 namespace SmartPantry.HttpApi.Host.Tests;
 
-public class OpenFoodFactsClientTests
+public class OpenFoodFactsProductCatalogClientTests
 {
     [Fact]
     public async Task Should_Read_Only_Fields_Returned_By_Provider()
@@ -54,9 +54,9 @@ public class OpenFoodFactsClientTests
         Assert.Equal(CatalogFailureKind.Unavailable, exception.Kind);
     }
 
-    private static OpenFoodFactsClient CreateClient(HttpMessageHandler handler)
+    private static OpenFoodFactsProductCatalogClient CreateClient(HttpMessageHandler handler)
     {
-        return new OpenFoodFactsClient(new HttpClient(handler)
+        return new OpenFoodFactsProductCatalogClient(new HttpClient(handler)
         {
             BaseAddress = new Uri("https://world.openfoodfacts.org/")
         });

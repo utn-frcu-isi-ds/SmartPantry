@@ -144,7 +144,7 @@ public class SmartPantryHttpApiHostModule : AbpModule
 
     private static void ConfigureExternalCatalog(ServiceConfigurationContext context)
     {
-        context.Services.AddHttpClient<IExternalProductCatalogClient, OpenFoodFactsClient>(client =>
+        context.Services.AddHttpClient<IExternalProductCatalogClient, OpenFoodFactsProductCatalogClient>(client =>
         {
             client.BaseAddress = new Uri("https://world.openfoodfacts.org/");
             client.Timeout = TimeSpan.FromSeconds(8);

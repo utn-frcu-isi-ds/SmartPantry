@@ -51,6 +51,29 @@ public class ExternalProductAppServiceMockTests
         result.Product.ShouldBeNull();
     }
 
+    [Fact]
+    public async Task Should_Preserve_Absent_Fields_From_Mock()
+    {
+        _catalogClient.GetByBarcodeAsync("7791234567894").Returns(new ExternalProductDto
+        {
+            Code = "7791234567894",
+            Name = null,
+            Brand = null,
+            ImageUrl = null
+        });
+
+        var result = await _service.GetByBarcodeAsync(new BarcodeLookupInputDto
+        {
+            Barcode = "7791234567894"
+        });
+
+        result.Status.ShouldBe(ExternalProductLookupStatus.Found);
+        result.Product.ShouldNotBeNull();
+        result.Product.Name.ShouldBeNull();
+        result.Product.Brand.ShouldBeNull();
+        result.Product.ImageUrl.ShouldBeNull();
+    }
+
     [Theory]
     [InlineData(CatalogFailureKind.RateLimited, ExternalProductLookupStatus.RateLimited)]
     [InlineData(CatalogFailureKind.Unavailable, ExternalProductLookupStatus.Unavailable)]

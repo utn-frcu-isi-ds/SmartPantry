@@ -3,6 +3,7 @@ using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using SmartPantry.Authors;
 using SmartPantry.Books;
 using SmartPantry.Products;
+using SmartPantry.Pantry;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -35,6 +36,10 @@ public class SmartPantryDbContext :
     public DbSet<Book> Books { get; set; }
 
     public DbSet<Product> Products { get; set; }
+
+    public DbSet<PantryItem> PantryItems { get; set; }
+
+    public DbSet<ExpirationAlert> ExpirationAlerts { get; set; }
 
     #region Entities from the modules
 
@@ -111,6 +116,24 @@ public class SmartPantryDbContext :
             b.ConfigureByConvention();
             b.Property(x => x.Name).IsRequired().HasMaxLength(ProductConsts.MaxNameLength);
             b.Property(x => x.Brand).HasMaxLength(ProductConsts.MaxBrandLength);
+        });
+
+        builder.Entity<PantryItem>(b =>
+        {
+            b.ToTable(SmartPantryConsts.DbTablePrefix + "PantryItems", SmartPantryConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId)
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
+            b.HasIndex(x => x.UserId);
+        });
+
+        builder.Entity<ExpirationAlert>(b =>
+        {
+            b.ToTable(SmartPantryConsts.DbTablePrefix + "ExpirationAlerts", SmartPantryConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.HasOne<PantryItem>().WithMany().HasForeignKey(x => x.PantryItemId).IsRequired();
+            b.HasIndex(x => x.PantryItemId).IsUnique();
+            b.HasIndex(x => x.UserId);
         });
 
         /* Configure your own tables/entities inside here */

@@ -6,6 +6,8 @@ using SmartPantry.Pantry;
 using SmartPantry.Products;
 using Volo.Abp.Domain.Repositories;
 using Xunit;
+using System.Security.Claims;
+using Volo.Abp.Security.Claims;
 
 namespace SmartPantry.EntityFrameworkCore.Pantry;
 
@@ -80,8 +82,12 @@ public class ExpirationAlertProcessorTests : SmartPantryTestBase<SmartPantryEnti
 
     private Task RunProcessor()
     {
-        return WithUnitOfWorkAsync(() =>
-            GetRequiredService<ExpirationAlertProcessor>().ProcessAsync(Today));
+        return WithUnitOfWorkAsync(async () =>
+        {
+            using var anonymous = GetRequiredService<ICurrentPrincipalAccessor>()
+                .Change(new ClaimsPrincipal(new ClaimsIdentity()));
+            await GetRequiredService<ExpirationAlertProcessor>().ProcessAsync(Today);
+        });
     }
 
     private Task ChangeExpirationDate(Guid itemId, DateOnly date)

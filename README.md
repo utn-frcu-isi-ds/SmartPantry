@@ -26,6 +26,22 @@ Requisitos: Visual Studio 2022 o 2026 con el componente Desarrollo de ASP.NET y 
 
 Sin Visual Studio, desde la raíz se puede utilizar `abp install-libs`, `dotnet restore .\SmartPantry.slnx` y `dotnet build .\SmartPantry.slnx --configuration Debug --no-restore`.
 
+## Seguridad del backend (TP09)
+
+El login de ABP se prueba desde **Authorize > oidc** en Swagger. Ejecutar primero DbMigrator y HttpApi.Host como indica la guía anterior. La opción **Bearer** permite pegar el `access_token` manualmente. Para comprobar un token sin cookies del login, usar un segundo navegador o perfil que no haya iniciado sesión en ABP.
+
+RF-05 (consulta externa) y RF-08 (guardado interno) requieren autenticación y admiten al usuario común. RF-04 utiliza `GET /api/identity/users`: el usuario común no tiene permiso y el administrador puede ejecutar el listado. El worker de vencimientos sigue funcionando sin una sesión de usuario.
+
+`OperationAuthorizationTests` comprueba estas restricciones con SQLite y restaura la autorización real de ABP, sin `AlwaysAllowAuthorizationService`. Ejecutar `dotnet test SmartPantry.slnx` o Test Explorer. La verificación del token y los códigos HTTP se realiza además en Swagger.
+
+## Mi despensa (TP10)
+
+La ruta Angular `/pantry` muestra los ítems del usuario autenticado. El servidor toma el propietario de `ICurrentUser`; no recibe un identificador de usuario desde la interfaz. El AppService devuelve `404` al consultar o modificar un ítem ajeno, sin revelar si existe. Los endpoints son `/api/app/pantry-item` (listado paginado y alta RF-10), `/api/app/pantry-item/{id}` (consulta, edición y eliminación RF-11) y `/api/app/pantry-item/{id}/mark-consumed` (consumo RF-11). Angular usa exclusivamente `PantryItemService` del proxy ABP generado con `abp generate-proxy -t ng`.
+
+Los ítems consumidos permanecen visibles como historial, diferenciados de los disponibles, hasta que el usuario los elimina expresamente. `ListService` controla páginas de diez ítems; no se descarga la despensa completa. La fecha es un `DateOnly` de calendario: la interfaz la presenta en el idioma activo sin convertir el día, y el worker del TP08 evalúa el día calendario UTC. Los datos de cantidad, unidad y vencimiento son opcionales; la interfaz muestra “Sin informar” o “Not provided” cuando faltan.
+
+El componente maneja por sí mismo los errores de listado, edición y acciones para mostrar mensajes localizados, ofrecer reintento y conservar el formulario tras un rechazo. Por eso pasa `skipHandleError: true` al proxy en esas llamadas. La validación de cantidad, unidad y fecha también se ejecuta en el servidor. Las pruebas del componente sustituyen el proxy por un mock y no usan la red.
+
 ## Estructura de la solución
 
 - `src`: capas Domain, Application, EntityFrameworkCore y HttpApi.Host de la aplicación ABP.

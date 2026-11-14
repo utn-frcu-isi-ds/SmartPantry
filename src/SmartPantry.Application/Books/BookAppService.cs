@@ -104,7 +104,6 @@ public class BookAppService : ApplicationService, IBookAppService
         await _repository.DeleteAsync(id);
     }
 
-    [AllowAnonymous]
     public async Task<IRemoteStreamContent> GetListAsExcelFileAsync(BookExcelDownloadDto input)
     {
         var downloadToken = await _excelDownloadTokenCache.GetAsync(input.DownloadToken);

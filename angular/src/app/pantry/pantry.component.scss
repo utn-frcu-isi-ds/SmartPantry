@@ -1,0 +1,31 @@
+.pantry-page { max-width: 1100px; margin: 0 auto; padding: 1rem 0 3rem; }
+.pantry-heading { border-bottom: 1px solid #d9e1df; margin-bottom: 1.25rem; }
+.pantry-heading h1 { font-size: 1.55rem; font-weight: 650; margin: 0 0 .8rem; }
+.pantry-state { padding: 2rem 0; color: #44545c; }
+.pantry-state p { margin-bottom: .75rem; }
+.pantry-list { border-top: 1px solid #d9e1df; }
+.pantry-row { display: grid; grid-template-columns: minmax(160px, 1.2fr) minmax(320px, 2.5fr) auto; gap: 1rem; align-items: center; border-bottom: 1px solid #d9e1df; padding: 1rem 0; }
+.pantry-row.consumed { background: #f5f7f6; }
+.item-main { display: flex; flex-direction: column; min-width: 0; }
+.item-main strong { overflow-wrap: anywhere; }
+.item-status { color: #51626a; font-size: .85rem; }
+.item-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; margin: 0; }
+.item-details dt { color: #62727a; font-size: .77rem; font-weight: 500; }
+.item-details dd { margin: 0; overflow-wrap: anywhere; }
+.item-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+.item-actions .btn { white-space: normal; }
+.pantry-pagination { display: flex; justify-content: flex-end; align-items: center; gap: .8rem; margin-top: 1rem; }
+.edit-backdrop { position: fixed; inset: 0; z-index: 1040; background: rgb(18 32 39 / 48%); }
+.edit-dialog { position: fixed; z-index: 1041; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(94vw, 460px); max-height: 90vh; overflow-y: auto; padding: 1.25rem; background: #fff; border-radius: 4px; box-shadow: 0 12px 48px rgb(0 0 0 / 20%); }
+.edit-dialog h2 { font-size: 1.15rem; margin: 0 0 1rem; }
+.field { margin-bottom: .85rem; }
+.field label { display: block; margin-bottom: .25rem; }
+.edit-actions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.25rem; }
+@media (max-width: 800px) {
+  .pantry-row { grid-template-columns: 1fr; gap: .65rem; }
+  .item-actions { justify-content: flex-start; }
+}
+@media (max-width: 480px) {
+  .item-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .item-actions .btn { flex: 1 1 45%; }
+}

@@ -4,7 +4,7 @@ using Volo.Abp.Application.Services;
 
 namespace SmartPantry.ExternalProducts;
 
-[AllowAnonymous]
+[Authorize]
 public class ExternalProductAppService : ApplicationService, IExternalProductAppService
 {
     private readonly IExternalProductCatalogClient _catalogClient;
@@ -14,7 +14,7 @@ public class ExternalProductAppService : ApplicationService, IExternalProductApp
         _catalogClient = catalogClient;
     }
 
-    public async Task<ExternalProductLookupDto> GetByBarcodeAsync(BarcodeLookupInputDto input)
+    public virtual async Task<ExternalProductLookupDto> GetByBarcodeAsync(BarcodeLookupInputDto input)
     {
         try
         {

@@ -29,5 +29,11 @@ function configureRoutes() {
         layout: eLayoutType.application,
         requiredPolicy: 'SmartPantry.Authors',
       },
+      {
+        path: '/pantry',
+        name: '::Menu:Pantry',
+        iconClass: 'fas fa-box-open',
+        layout: eLayoutType.application,
+      },
   ]);
 }

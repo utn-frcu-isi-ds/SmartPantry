@@ -124,6 +124,8 @@ public class SmartPantryDbContext :
             b.ConfigureByConvention();
             b.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
+            b.Property(x => x.Quantity).HasPrecision(18, 3);
+            b.Property(x => x.Unit).HasMaxLength(32);
             b.HasIndex(x => x.UserId);
         });
 

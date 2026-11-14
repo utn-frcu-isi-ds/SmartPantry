@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -160,6 +161,33 @@ public class SmartPantryHttpApiHostModule : AbpModule
     private void ConfigureAuthentication(ServiceConfigurationContext context)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
+        context.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = redirect =>
+            {
+                if (redirect.Request.Path.StartsWithSegments("/api"))
+                {
+                    redirect.Response.StatusCode = 401;
+                }
+                else
+                {
+                    redirect.Response.Redirect(redirect.RedirectUri);
+                }
+                return Task.CompletedTask;
+            };
+            options.Events.OnRedirectToAccessDenied = redirect =>
+            {
+                if (redirect.Request.Path.StartsWithSegments("/api"))
+                {
+                    redirect.Response.StatusCode = 403;
+                }
+                else
+                {
+                    redirect.Response.Redirect(redirect.RedirectUri);
+                }
+                return Task.CompletedTask;
+            };
+        });
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
@@ -297,7 +325,8 @@ public class SmartPantryHttpApiHostModule : AbpModule
 
         if (!env.IsDevelopment())
         {
-            app.UseErrorPage();
+            app.UseWhen(request => !request.Request.Path.StartsWithSegments("/api"),
+                branch => branch.UseErrorPage());
         }
 
         app.UseRouting();

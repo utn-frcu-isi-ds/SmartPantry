@@ -1,0 +1,104 @@
+<section class="pantry-page">
+  <header class="pantry-heading">
+    <h1>{{ '::Pantry:Title' | abpLocalization }}</h1>
+  </header>
+
+  @if (actionError()) {
+    <div class="alert alert-danger" role="alert">{{ actionError()! | abpLocalization }}</div>
+  }
+
+  @if (state() === 'loading') {
+    <div class="pantry-state" role="status">{{ '::Pantry:Loading' | abpLocalization }}</div>
+  } @else if (state() === 'error') {
+    <div class="pantry-state" role="alert">
+      <p>{{ '::Pantry:LoadError' | abpLocalization }}</p>
+      <button type="button" class="btn btn-outline-primary" (click)="retry()">
+        <i class="fa fa-refresh" aria-hidden="true"></i>
+        {{ '::Pantry:Retry' | abpLocalization }}
+      </button>
+    </div>
+  } @else if (state() === 'empty') {
+    <div class="pantry-state">{{ '::Pantry:Empty' | abpLocalization }}</div>
+  } @else {
+    <div class="pantry-list">
+      @for (item of items(); track item.id) {
+        <article class="pantry-row" [class.consumed]="!item.isActive">
+          <div class="item-main">
+            <strong>{{ item.productName }}</strong>
+            <span class="item-status">{{ (item.isActive ? '::Pantry:Active' : '::Pantry:Consumed') | abpLocalization }}</span>
+          </div>
+          <dl class="item-details">
+            <div>
+              <dt>{{ '::Pantry:Quantity' | abpLocalization }}</dt>
+              <dd>{{ item.quantity ?? ('::Pantry:Missing' | abpLocalization) }}</dd>
+            </div>
+            <div>
+              <dt>{{ '::Pantry:Unit' | abpLocalization }}</dt>
+              <dd>{{ item.unit || ('::Pantry:Missing' | abpLocalization) }}</dd>
+            </div>
+            <div>
+              <dt>{{ '::Pantry:Expiration' | abpLocalization }}</dt>
+              <dd>{{ item.expirationDate ? (item.expirationDate | date:'mediumDate') : ('::Pantry:Missing' | abpLocalization) }}</dd>
+            </div>
+          </dl>
+          <div class="item-actions">
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="edit(item)">
+              <i class="fa fa-pencil" aria-hidden="true"></i> {{ '::Pantry:Edit' | abpLocalization }}
+            </button>
+            @if (item.isActive) {
+              <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!!busyId()" (click)="consume(item)">
+                <i class="fa fa-check" aria-hidden="true"></i> {{ '::Pantry:Consume' | abpLocalization }}
+              </button>
+            }
+            <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="!!busyId()" (click)="remove(item)">
+              <i class="fa fa-trash" aria-hidden="true"></i> {{ '::Pantry:Delete' | abpLocalization }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+    <nav class="pantry-pagination" [attr.aria-label]="'::Pantry:Pages' | abpLocalization">
+      <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="list.page === 0" (click)="changePage(-1)">
+        {{ '::Pantry:Previous' | abpLocalization }}
+      </button>
+      <span>{{ list.page + 1 }}</span>
+      <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="(list.page + 1) * list.maxResultCount >= list.totalCount" (click)="changePage(1)">
+        {{ '::Pantry:Next' | abpLocalization }}
+      </button>
+    </nav>
+  }
+
+  @if (selected()) {
+    <div class="edit-backdrop" role="presentation" (click)="cancelEdit()"></div>
+    <section class="edit-dialog" role="dialog" aria-modal="true" [attr.aria-label]="'::Pantry:Edit' | abpLocalization">
+      <h2>{{ '::Pantry:Edit' | abpLocalization }}: {{ selected()?.productName }}</h2>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="field">
+          <label for="pantry-quantity">{{ '::Pantry:Quantity' | abpLocalization }}</label>
+          <input id="pantry-quantity" class="form-control" type="number" min="0" step="any" formControlName="quantity" />
+          @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
+            <small class="text-danger">{{ '::Pantry:QuantityInvalid' | abpLocalization }}</small>
+          }
+        </div>
+        <div class="field">
+          <label for="pantry-unit">{{ '::Pantry:Unit' | abpLocalization }}</label>
+          <input id="pantry-unit" class="form-control" type="text" maxlength="32" formControlName="unit" />
+          @if (form.controls.unit.touched && form.controls.unit.invalid) {
+            <small class="text-danger">{{ '::Pantry:UnitInvalid' | abpLocalization }}</small>
+          }
+        </div>
+        <div class="field">
+          <label for="pantry-expiration">{{ '::Pantry:Expiration' | abpLocalization }}</label>
+          <input id="pantry-expiration" class="form-control" type="date" formControlName="expirationDate" />
+          @if (form.controls.expirationDate.touched && form.controls.expirationDate.invalid) {
+            <small class="text-danger">{{ '::Pantry:DateInvalid' | abpLocalization }}</small>
+          }
+        </div>
+        <footer class="edit-actions">
+          <button class="btn btn-outline-secondary" type="button" (click)="cancelEdit()">{{ '::Pantry:Cancel' | abpLocalization }}</button>
+          <button class="btn btn-primary" type="submit" [disabled]="form.invalid || saving()">{{ '::Pantry:Save' | abpLocalization }}</button>
+        </footer>
+      </form>
+    </section>
+  }
+</section>
